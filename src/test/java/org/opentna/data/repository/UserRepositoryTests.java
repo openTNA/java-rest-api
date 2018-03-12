@@ -18,53 +18,83 @@ package org.opentna.data.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.opentna.data.model.entity.User;
 import org.opentna.rest.RestApplication;
+import org.opentna.rest.configuration.DataConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RestApplication.class})
 @DataJpaTest
+@Import(DataConfiguration.class)
 @Slf4j
 public class UserRepositoryTests {
 
-  @MockBean
+  @Autowired
   private UserRepository repository;
 
-  @Before
-  public void setUp() {
-    User user = new User("james", "123456", false, true, null, null);
-    Mockito.when(repository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
-    Mockito.when(repository.findAll()).thenReturn(Arrays.asList(user));
-  }
+  private User user;
+
+  private final String userUsername = "james";
+  private final String userPassword = "123456";
+  private final boolean userMustChangePassword = false;
+  private final boolean userEnabled = true;
 
   @Test
-  public void count() {
-    Collection<User> users = repository.findAll();
-    assertThat(users.size()).isEqualTo(1);
+  public void test() {
+    create();
+    findByUsername();
+    update();
+    delete();
   }
 
-  @Test
-  public void findByUsername() {
-    User entity = repository.findByUsername("james").orElse(null);
+  private void create() {
+    user = new User(userUsername, userPassword, userMustChangePassword, userEnabled, null, null);
+    user.setCreatedAt(System.currentTimeMillis());
+    user = repository.save(user);
+    log.info(String.format("CREATES: %s", user.toString()));
+    assertThat(user).hasFieldOrPropertyWithValue("username", userUsername);
+    assertThat(user).hasFieldOrPropertyWithValue("password", userPassword);
+    assertThat(user).hasFieldOrPropertyWithValue("mustChangePassword", userMustChangePassword);
+    assertThat(user).hasFieldOrPropertyWithValue("enabled", userEnabled);
+    assertThat(user).hasFieldOrProperty("createdAt");
+  }
 
-    log.info(String.format("%s", entity.toString()));
+  private void findByUsername() {
+    User entity = repository.findByUsername(userUsername).orElse(null);
+    log.info(String.format("RETRIEVES: %s", entity.toString()));
+    assertThat(entity.getUsername()).isEqualTo(userUsername);
+    assertThat(entity.getPassword()).isEqualTo(userPassword);
+    assertThat(entity.isMustChangePassword()).isEqualTo(userMustChangePassword);
+    assertThat(entity.isEnabled()).isEqualTo(userEnabled);
+  }
 
-    assertThat(entity.getUsername()).isEqualTo("james");
-    assertThat(entity.getPassword()).isEqualTo("123456");
-    assertThat(entity.isMustChangePassword()).isEqualTo(false);
-    assertThat(entity.isEnabled()).isEqualTo(true);
+  private void update() {
+    user.setUsername("squid");
+    user.setPassword("654321");
+    user.setLastModifiedAt(System.currentTimeMillis());
+    user = repository.save(user);
+    log.info(String.format("UPDATES: %s", user.toString()));
+    assertThat(user.getUsername()).isEqualTo("squid");
+    assertThat(user.getPassword()).isEqualTo("654321");
+    assertThat(user.isMustChangePassword()).isEqualTo(userMustChangePassword);
+    assertThat(user.isEnabled()).isEqualTo(userEnabled);
+    assertThat(user).hasFieldOrProperty("createdAt");
+    assertThat(user).hasFieldOrProperty("lastModifiedAt");
+  }
+
+  private void delete() {
+    repository.delete(user);
+    log.info(String.format("DELETES: %s", user.toString()));
+    assertThat(repository.findByUsername(userUsername).orElse(null)).isEqualTo(null);
+    assertThat(repository.findByUsername("squid").orElse(null)).isEqualTo(null);
   }
 
 }
