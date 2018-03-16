@@ -26,6 +26,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,9 +51,12 @@ import org.opentna.data.model.BaseEntity;
 @JsonIgnoreProperties(value = {"password"})
 public class User extends BaseEntity {
 
+  @NotNull
+  @Size(min = 2, message = "minimum of 2 characters")
   @Column(name = "name", unique = true, nullable = false, length = 32)
   private String username;
 
+  @NotNull
   @Column(name = "secret", nullable = false, length = 512)
   private String password;
 
