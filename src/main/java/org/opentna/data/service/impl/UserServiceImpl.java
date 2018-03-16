@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     User user = loadUserById(userId);
     user.setMustChangePassword(state);
     user.setLastModifiedAt(System.currentTimeMillis());
-    userRepository.saveAndFlush(user);
+    userRepository.save(user);
   }
 
   @Override
