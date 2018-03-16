@@ -20,6 +20,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,6 +44,8 @@ import org.opentna.data.model.BaseEntity;
 @Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Role extends BaseEntity {
 
+  @NotNull
+  @Size(min = 2, message = "minimum of 2 characters")
   @Column(name = "name", unique = true, nullable = false, length = 64)
   private String name;
 
