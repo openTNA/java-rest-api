@@ -32,7 +32,7 @@ public interface UserService {
    * Creates new user.
    *
    * @param user the user model
-   * @return a user record, never null or empty.
+   * @return a user record, never null or empty
    */
   public User createUser(@Valid User user);
 
@@ -40,7 +40,7 @@ public interface UserService {
    * Retrieves user with the given user ID.
    *
    * @param userId the user ID
-   * @return a user record.
+   * @return a user record
    */
   public User loadUserById(long userId);
 
@@ -48,7 +48,7 @@ public interface UserService {
    * Retrieves user with the given username.
    *
    * @param username the username
-   * @return a user record.
+   * @return a user record
    */
   public User loadUserByUsername(String username);
 
