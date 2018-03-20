@@ -17,6 +17,7 @@
 package org.opentna.data.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -60,6 +61,7 @@ public class User extends BaseEntity {
   @Column(name = "secret", nullable = false, length = 512)
   private String password;
 
+  @JsonProperty("must_change_password")
   @Type(type = "org.hibernate.type.BooleanType")
   @Column(name = "must_change_secret", nullable = false)
   private boolean mustChangePassword;
