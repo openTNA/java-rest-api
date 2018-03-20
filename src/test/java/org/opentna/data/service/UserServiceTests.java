@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RestApplication.class})
@@ -72,10 +73,10 @@ public class UserServiceTests {
     assertThat(user).hasFieldOrPropertyWithValue("username", "james");
   }
 
-  @Test(expected = UserNotFoundException.class)
+  @Test
   public void test005() {
     // testing for a nonexistent ID
-    userService.loadUserById(2);
+    assertThat(userService.loadUserById(2)).isEqualTo(null);
   }
 
   @Test
@@ -86,10 +87,10 @@ public class UserServiceTests {
     assertThat(user).hasFieldOrPropertyWithValue("username", "james");
   }
 
-  @Test(expected = UserNotFoundException.class)
+  @Test
   public void test007() {
     // testing for a nonexistent username
-    userService.loadUserByUsername("test");
+    assertThat(userService.loadUserByUsername("test")).isEqualTo(null);
   }
 
   @Test
@@ -156,6 +157,27 @@ public class UserServiceTests {
   public void test016() {
     // testing for update the enabled state with incorrect user ID
     userService.updateEnabled(9, false);
+  }
+
+  @Test
+  @Transactional
+  public void test017() {
+    User original = userService.loadUserById(1);
+    log.info(String.format("%s", original));
+
+    original.setUsername("tester");
+    original.setPassword("123456");
+    original.setMustChangePassword(false);
+    original.setEnabled(true);
+    User user = userService.updateUser(original);
+    log.info(String.format("%s", user));
+
+    assertThat(user).hasFieldOrPropertyWithValue("username", "tester");
+    assertThat(user).hasFieldOrPropertyWithValue("password", "123456");
+    assertThat(user).hasFieldOrPropertyWithValue("mustChangePassword", false);
+    assertThat(user).hasFieldOrPropertyWithValue("enabled", true);
+    assertThat(user).hasFieldOrProperty("createdAt");
+    assertThat(user).hasFieldOrProperty("lastModifiedAt");
   }
 
 }

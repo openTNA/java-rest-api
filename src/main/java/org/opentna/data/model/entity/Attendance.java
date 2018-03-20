@@ -18,6 +18,7 @@ package org.opentna.data.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -65,9 +66,11 @@ public class Attendance implements Serializable {
   @JsonIdentityReference(alwaysAsId = true)
   private ProximityCard proximityCard;
 
+  @JsonProperty("logged")
   @Column(name = "logged_unix", nullable = false)
   private Long loggedAt;
 
+  @JsonProperty("created")
   @Column(name = "created_unix", nullable = false)
   private Long createdAt;
 

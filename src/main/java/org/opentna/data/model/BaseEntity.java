@@ -16,6 +16,7 @@
 
 package org.opentna.data.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -41,9 +42,11 @@ public abstract class BaseEntity implements Serializable {
   @Column(name = "id", unique = true, nullable = false)
   private Long id;
 
+  @JsonProperty("created")
   @Column(name = "created_unix", nullable = false)
   private Long createdAt;
 
+  @JsonProperty("last_modified")
   @Column(name = "modified_unix")
   private Long lastModifiedAt;
 

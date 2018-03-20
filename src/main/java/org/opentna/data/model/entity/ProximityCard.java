@@ -16,6 +16,7 @@
 
 package org.opentna.data.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -45,6 +46,7 @@ import org.opentna.data.model.BaseEntity;
 public class ProximityCard extends BaseEntity {
 
   @NotNull
+  @JsonProperty("serial_no")
   @Size(min = 1, max = 64)
   @Column(name = "serial_no", unique = true, nullable = false, length = 64)
   private String serialNo;
