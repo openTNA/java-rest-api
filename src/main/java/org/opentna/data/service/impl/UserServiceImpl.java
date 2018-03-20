@@ -57,13 +57,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User loadUserById(long userId) {
-    return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    return userRepository.findById(userId).orElse(null);
   }
 
   @Override
   public User loadUserByUsername(String username) {
-    return userRepository.findByUsername(username)
-        .orElseThrow(() -> new UserNotFoundException(username));
+    return userRepository.findByUsername(username).orElse(null);
   }
 
   @Override
@@ -72,8 +71,10 @@ public class UserServiceImpl implements UserService {
     if (userId < 1) {
       throw new IllegalArgumentException("Invalid user ID");
     }
-    // TODO: validate the new password
     User user = loadUserById(userId);
+    if (user == null) {
+      throw new UserNotFoundException(userId);
+    }
     user.setPassword(encodePassword(password));
     user.setLastModifiedAt(System.currentTimeMillis());
     log.debug(String.format("%s", user));
@@ -87,6 +88,9 @@ public class UserServiceImpl implements UserService {
       throw new IllegalArgumentException("Invalid user ID");
     }
     User user = loadUserById(userId);
+    if (user == null) {
+      throw new UserNotFoundException(userId);
+    }
     user.setMustChangePassword(state);
     user.setLastModifiedAt(System.currentTimeMillis());
     userRepository.save(user);
@@ -99,6 +103,9 @@ public class UserServiceImpl implements UserService {
       throw new IllegalArgumentException("Invalid user ID");
     }
     User user = loadUserById(userId);
+    if (user == null) {
+      throw new UserNotFoundException(userId);
+    }
     user.setEnabled(state);
     user.setLastModifiedAt(System.currentTimeMillis());
     userRepository.save(user);

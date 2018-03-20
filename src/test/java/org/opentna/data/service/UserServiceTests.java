@@ -72,10 +72,10 @@ public class UserServiceTests {
     assertThat(user).hasFieldOrPropertyWithValue("username", "james");
   }
 
-  @Test(expected = UserNotFoundException.class)
+  @Test
   public void test005() {
     // testing for a nonexistent ID
-    userService.loadUserById(2);
+    assertThat(userService.loadUserById(2)).isEqualTo(null);
   }
 
   @Test
@@ -86,10 +86,10 @@ public class UserServiceTests {
     assertThat(user).hasFieldOrPropertyWithValue("username", "james");
   }
 
-  @Test(expected = UserNotFoundException.class)
+  @Test
   public void test007() {
     // testing for a nonexistent username
-    userService.loadUserByUsername("test");
+    assertThat(userService.loadUserByUsername("test")).isEqualTo(null);
   }
 
   @Test
