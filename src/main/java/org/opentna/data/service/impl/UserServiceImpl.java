@@ -67,6 +67,28 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
+  public User updateUser(@Valid User user) {
+    long userId = user.getId();
+    if (userId < 1) {
+      throw new IllegalArgumentException("Invalid user ID");
+    }
+    User original = loadUserById(userId);
+    if (original == null) {
+      throw new UserNotFoundException(userId);
+    }
+    original.setUsername(user.getUsername());
+    original.setPassword(encodePassword(user.getPassword()));
+    original.setMustChangePassword(user.isMustChangePassword());
+    original.setEnabled(user.isEnabled());
+    original.setLastModifiedAt(System.currentTimeMillis());
+    original.setRoles(user.getRoles());
+    original.setProximityCards(user.getProximityCards());
+    log.debug(String.format("%s", user));
+    return userRepository.save(user);
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public void changePassword(long userId, String password) {
     if (userId < 1) {
       throw new IllegalArgumentException("Invalid user ID");

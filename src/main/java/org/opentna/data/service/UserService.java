@@ -53,6 +53,14 @@ public interface UserService {
   public User loadUserByUsername(String username);
 
   /**
+   * Updates a user.
+   *
+   * @param user the user model
+   * @return a user record
+   */
+  public User updateUser(@Valid User user);
+
+  /**
    * Change password.
    *
    * @param userId the user ID
