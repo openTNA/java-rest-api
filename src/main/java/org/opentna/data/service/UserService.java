@@ -18,6 +18,8 @@ package org.opentna.data.service;
 
 import javax.validation.Valid;
 import org.opentna.data.model.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -51,6 +53,14 @@ public interface UserService {
    * @return a user record
    */
   public User loadUserByUsername(String username);
+
+  /**
+   * Retrieves all user with the given pageable.
+   *
+   * @param pageable the pageable
+   * @return a page of a list of user
+   */
+  public Page<User> loadAllUserByPaginated(Pageable pageable);
 
   /**
    * Updates a user.

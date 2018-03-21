@@ -23,6 +23,8 @@ import org.opentna.data.repository.UserRepository;
 import org.opentna.data.service.UserNotFoundException;
 import org.opentna.data.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +65,11 @@ public class UserServiceImpl implements UserService {
   @Override
   public User loadUserByUsername(String username) {
     return userRepository.findByUsername(username).orElse(null);
+  }
+
+  @Override
+  public Page<User> loadAllUserByPaginated(Pageable pageable) {
+    return userRepository.findAll(pageable);
   }
 
   @Override
