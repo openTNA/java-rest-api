@@ -62,6 +62,9 @@ public class UserRestController {
   @Autowired
   private RoleService roleService;
 
+  private static final int DEFAULT_PAGE_SIZE = 10;
+  private static final int DEFAULT_PAGE_NUMBER = 1;
+
   /**
    * Creates new user.
    *
@@ -118,10 +121,11 @@ public class UserRestController {
    * @return a collection of user model as JSON
    */
   @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<?> retrieveAllUser(@RequestParam("page") int page,
-      @RequestParam("size") int size) {
-    page = (page < 1) ? 0 : page - 1;
-    size = (size < 1) ? 1 : size;
+  public ResponseEntity<?> retrieveAllUser(
+      @RequestParam(value = "page", required = false) Integer page,
+      @RequestParam(value = "size", required = false) Integer size) {
+    page = (page == null) ? DEFAULT_PAGE_NUMBER - 1 : (page < 1) ? 0 : page - 1;
+    size = (size == null) ? DEFAULT_PAGE_SIZE : (size < 1) ? 1 : size;
 
     Page<User> result = userService.loadAllUserByPaginated(PageRequest.of(page, size));
     log.debug(String.format("Total pages: %s", result.getTotalPages()));
