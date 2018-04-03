@@ -63,7 +63,6 @@ public class UserRestController {
   private RoleService roleService;
 
   private static final int DEFAULT_PAGE_SIZE = 10;
-  private static final int DEFAULT_PAGE_NUMBER = 1;
 
   /**
    * Creates new user.
@@ -124,12 +123,12 @@ public class UserRestController {
   public ResponseEntity<?> retrieveAllUser(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size) {
-    page = (page == null) ? DEFAULT_PAGE_NUMBER - 1 : (page < 1) ? 0 : page - 1;
+    page = (page == null) ? 0 : (page < 1) ? 0 : page - 1;
     size = (size == null) ? DEFAULT_PAGE_SIZE : (size < 1) ? 1 : size;
 
     Page<User> result = userService.loadAllUserByPaginated(PageRequest.of(page, size));
     log.debug(String.format("Total pages: %s", result.getTotalPages()));
-    if (page > result.getTotalPages()) {
+    if ((page + 1) > result.getTotalPages()) {
       log.debug("Resource not found");
       return new ResponseEntity<String>("{}", HttpStatus.BAD_REQUEST);
     }
